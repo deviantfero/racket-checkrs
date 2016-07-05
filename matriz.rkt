@@ -1,5 +1,7 @@
 #lang racket
 
+(provide initGameMatrix)
+
 (define (set-p2 v cant len)
   (if (> cant 0)
     (begin
@@ -52,5 +54,3 @@
   (initMatrix1 matrix 5 3)
   matrix
 )
-
-(initGameMatrix)
