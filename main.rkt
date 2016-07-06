@@ -10,7 +10,7 @@
 
 (define frame
   (new frame%
-       [label "BANANIN IDIOTIN"]
+       [label "Racket Checkers"]
        [width 1280]
        [height 800]))
 
