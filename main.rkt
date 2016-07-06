@@ -11,8 +11,8 @@
 (define frame
   (new frame%
        [label "Racket Checkers"]
-       [width 1280]
-       [height 800]))
+       [width 922]
+       [height 576]))
 
 (define game-canvas%
   (class canvas%
@@ -27,9 +27,9 @@
 
     (define buttons
       (list
-       (gbutton (gpt 83 614) (gpt 308 735) scores (gpt 53 583))
-       (gbutton (gpt 447 480) (gpt 756 567) play (gpt 503 471))
-       (gbutton (gpt 968 118) (gpt 1226 227) howto (gpt 975 103))))
+       (gbutton (gpt 60 442) (gpt 222 529) scores (gpt 38 420))
+       (gbutton (gpt 362 339) (gpt 545 409) play (gpt 362 339))
+       (gbutton (gpt 710 85) (gpt 883 163) howto (gpt 702 74))))
 
     (define (handle-mouse-motion x y)
       (let loop ([bl buttons])
