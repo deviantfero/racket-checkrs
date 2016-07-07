@@ -8,9 +8,17 @@
   (define val1 (vector-ref tmpv1 x1))
   (define tmpv2 (list->vector (vector-ref M y2)))
   (vector-set! tmpv1 x1 (vector-ref tmpv2 x2))
-  (vector-set! tmpv2 x2 val1)
-  (vector-set! M y1 (vector->list tmpv1))
-  (vector-set! M y2 (vector->list tmpv2))
+  (if (equal? y1 y2)
+    (begin
+      (vector-set! tmpv1 x2 val1)
+      (vector-set! M y1 (vector->list tmpv1))
+    )
+    (begin
+      (vector-set! tmpv2 x2 val1)
+      (vector-set! M y1 (vector->list tmpv1))
+      (vector-set! M y2 (vector->list tmpv2))
+    )
+  )
 )
 
 (define (move M x1 y1 x2 y2 p)
