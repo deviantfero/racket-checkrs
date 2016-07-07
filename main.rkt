@@ -1,6 +1,8 @@
 #lang racket/gui
 
 (provide frame)
+(require "./login.rkt")
+(require "./frame.rkt")
 
 (define bg (make-object bitmap% "img/bg.jpg"))
 (define bg-howto (make-object bitmap% "img/HOWTO.jpg"))
@@ -9,14 +11,6 @@
 (struct gpt (x y))
 (struct gbutton (pt-1 pt-2 img img-pt))
 ; (struct gbutton (pt-1 pt-2 img img-pt cb))
-
-
-
-(define frame
-  (new frame%
-       [label "Racket Checkers"]
-       [width 922]
-       [height 576]))
 
 ;-- defines menu-canvas where it connects to all other screens
 (define menu-canvas%
@@ -66,7 +60,7 @@
         ([and (and (> x (gpt-x (gbutton-pt-1 (second buttons)))) 
                      (< x (gpt-x (gbutton-pt-2 (second buttons)))))
                       (and (> y (gpt-y (gbutton-pt-1 (second buttons))))
-                            (< y (gpt-y (gbutton-pt-2 (second buttons)))))] (display "play"))
+                            (< y (gpt-y (gbutton-pt-2 (second buttons)))))] (set-canvas 2))
         ([and (and (> x (gpt-x (gbutton-pt-1 (third buttons)))) 
                      (< x (gpt-x (gbutton-pt-2 (third buttons)))))
                       (and (> y (gpt-y (gbutton-pt-1 (third buttons))))
@@ -239,6 +233,9 @@
 (define (set-canvas opt)
   (case opt
     ((1) (begin (new score-canvas% (parent frame))
+          (send frame delete-child (car (send frame get-children))) 
+          (send frame show #t)))
+    ((2) (begin (new loginf-canvas% (parent frame))
           (send frame delete-child (car (send frame get-children))) 
           (send frame show #t)))
     ((3) (begin (new howto-canvas% (parent frame))
