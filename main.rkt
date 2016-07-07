@@ -1,8 +1,8 @@
 #lang racket/gui
 
-(provide frame)
 (require "./login.rkt")
 (require "./frame.rkt")
+(require "./game.rkt")
 
 (define bg (make-object bitmap% "img/bg.jpg"))
 (define bg-howto (make-object bitmap% "img/HOWTO.jpg"))
@@ -235,7 +235,7 @@
     ((1) (begin (new score-canvas% (parent frame))
           (send frame delete-child (car (send frame get-children))) 
           (send frame show #t)))
-    ((2) (begin (new loginf-canvas% (parent frame))
+    ((2) (begin (new game-canvas% (parent frame))
           (send frame delete-child (car (send frame get-children))) 
           (send frame show #t)))
     ((3) (begin (new howto-canvas% (parent frame))

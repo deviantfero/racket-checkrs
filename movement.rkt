@@ -1,8 +1,7 @@
 #lang racket
 
-(require "./matriz.rkt")
 (require "./libs/io.rkt")
-(define chipboard (initGameMatrix))
+(provide movechip)
 
 (define (movechip M x1 y1 x2 y2)
   (define tmpv1 (list->vector (vector-ref M y1)))
@@ -74,21 +73,21 @@
   )
 )
 
-(define (playtest M p)
-  (displayM (vector->list M))
-  (define win (wincondition M))(newline)
-  (display "Player")(display p)(newline)
-  (if (zero? win)
-    (begin
-      (move M (in "X1:") (in "Y1:") (in "X2:") (in "Y2:") p)
-      (if (> p 1)
-        (playtest M 1)
-        (playtest M 2)
-      )
-    );-- ends with begin
-    (if (equal? win 1)
-      (display "Player 1 wins")
-      (display "Player 2 wins")
-    )
-  )
-)
+;;(define (playtest M p)
+;;  (displayM (vector->list M))
+;;  (define win (wincondition M))(newline)
+;;  (display "Player")(display p)(newline)
+;;  (if (zero? win)
+;;    (begin
+;;      (move M (in "X1:") (in "Y1:") (in "X2:") (in "Y2:") p)
+;;      (if (> p 1)
+;;        (playtest M 1)
+;;        (playtest M 2)
+;;      )
+;;    );-- ends with begin
+;;    (if (equal? win 1)
+;;      (display "Player 1 wins")
+;;      (display "Player 2 wins")
+;;    )
+;;  )
+;;)

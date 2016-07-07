@@ -1,6 +1,8 @@
 #lang racket
 
 (provide initGameMatrix)
+(provide getPat)
+(provide getVat)
 
 (define (set-p2 v cant len)
   (if (> cant 0)
@@ -45,6 +47,21 @@
 
 (define (createMatrix x y)
   (make-vector x (make-list y 0))
+)
+
+
+(define (getPat M x y)
+  (if (and (< x 9) (< y 9))
+    (list-ref (list-ref M y) x)
+    (void)
+  )
+)
+
+(define (getVat M x y)
+  (if (and (< x 9) (< y 9))
+    (list-ref (vector-ref M y) x)
+    (void)
+  )
 )
 
 ;--fucnion para crear la matriz principal de juego
