@@ -213,7 +213,7 @@
 )
 
 (define (wincondition M)
-  (if (checkP1 M 4 0)
+  (if (checkP1 M 5 0)
     1
     (if (checkP2 M 1 5)
       2
