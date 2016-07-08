@@ -3,6 +3,7 @@
 (require "./login.rkt")
 (require "./frame.rkt")
 (require "./game.rkt")
+(require "./libs/pdata.rkt")
 
 (define bg (make-object bitmap% "img/bg.jpg"))
 (define bg-howto (make-object bitmap% "img/HOWTO.jpg"))
@@ -10,6 +11,7 @@
 
 (struct gpt (x y))
 (struct gbutton (pt-1 pt-2 img img-pt))
+(define coordinates (build-list 10 (lambda (x) (+ (* x 10) 100))))
 ; (struct gbutton (pt-1 pt-2 img img-pt cb))
 
 ;-- defines menu-canvas where it connects to all other screens
@@ -217,8 +219,19 @@
               (action evt-x evt-y)
               (printf "Click % (~a, ~a)~n" evt-x evt-y))])))
 
+    (define (paint-high dc c)
+      (if (< c (length (getHigh)))
+        (begin
+          (send dc draw-text (list-ref (getHigh) c) 250 (+ 150 (* c 11)))
+          (paint-high dc (+ c 1))
+        )
+        (void)
+      )
+    )
+
     (define/private (paint-game self dc)
       (send dc draw-bitmap bg-scores 0 0)
+      (paint-high dc 0)
       (send dc set-pen "blue" 1 'solid) (send dc set-brush "white" 'transparent) (cond
         [(not (eq? sel-button 'none))
          (let ([img-x (gpt-x sel-button-pt)]

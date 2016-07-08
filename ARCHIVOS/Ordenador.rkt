@@ -1,5 +1,6 @@
 #lang racket
 (require "HighScore.rkt")
+(provide Ordenar)
 ;;(Ordenar) (Funcion Principal)
 (define (Ordenar)
   (define FileR1 (open-input-file "Puntajes.txt" #:mode 'text))

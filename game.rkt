@@ -3,6 +3,8 @@
 (require "./frame.rkt")
 (require "./matriz.rkt")
 (require "./movement.rkt")
+(require "./libs/pdata.rkt")
+(require "./win.rkt")
 (provide game-canvas%)
 
 (define bg (make-object bitmap% "img/BOARD.jpg"))
@@ -102,6 +104,7 @@
 
     (define sel-button 'none)
     (define sel-button-pt 'none)
+    (define active-players (shuffle (readPlayers)))
 
     (define howto (make-object bitmap% "img/howto.jpg"))
     (define red (read-bitmap "img/red_token.png"))
@@ -198,7 +201,10 @@
             [evt-y (send evt get-y)])
         (cond
           [(eq? evt-type 'motion)
-           (void)]
+          (case (wincondition gm)
+            ((1) (begin (writeWinner (list-ref active-players 0)) (set-canvas 1)))
+            ((2) (begin (writeWinner (list-ref active-players 1)) (set-canvas 1)))
+            ((0) (void)))]
           [(eq? evt-type 'left-up)
             (begin
               (action evt-x evt-y)
@@ -206,6 +212,8 @@
 
     (define/private (paint-game self dc)
       (send dc draw-bitmap bg 0 0)
+      (send dc draw-text (car active-players) 87 476)
+      (send dc draw-text (cadr active-players) 734 476)
       (send dc set-pen "blue" 1 'solid) (send dc set-brush "white" 'transparent) (cond
         [(not (eq? sel-button 'none))
          (let ([img-x (gpt-x sel-button-pt)]
@@ -220,7 +228,7 @@
 ;-- changes canvas according to button number
 (define (set-canvas opt)
   (case opt
-    ((1) (begin (new game-canvas% (parent mainframe))
+    ((1) (begin (new win-canvas% (parent mainframe))
           (send mainframe delete-child (car (send mainframe get-children))) 
           (send mainframe show #t)))
   )

@@ -3,6 +3,7 @@
 (require "./libs/io.rkt")
 (provide movechip)
 (provide move)
+(provide wincondition)
 
 (define (movechip M x1 y1 x2 y2)
   (define tmpv1 (list->vector (vector-ref M y1)))
@@ -92,7 +93,7 @@
       )
         (if (and (> (- y2 1) 0) (> (- x2 1) 0) (equal? (list-ref (vector-ref M (- y2 1)) (- x2 1)) (list-ref (vector-ref M y1) x1)))
           1
-          (if (and (< (+ y2 1) 9) (< (+ x2 1) 9) (or (zero? (list-ref (vector-ref M (+ y2 1)) (+ x2 1)))
+          (if (and (and (< (+ y2 1) 9) (< (+ x2 1) 9)) (or (zero? (list-ref (vector-ref M (+ y2 1)) (+ x2 1)))
                    (equal? (list-ref (vector-ref M (+ y2 1)) (+ x2 1)) (list-ref (vector-ref M y1) x1))))
             1
             2
@@ -104,8 +105,38 @@
       )
         (if (and (< (+ y2 1) 9) (< (+ x2 1) 9) (equal? (list-ref (vector-ref M (+ y2 1)) (+ x2 1)) (list-ref (vector-ref M y1) x1)))
           1
-          (if (and (or (> (- y2 1) 0) (> (- x2 1) 0)) (or (zero? (list-ref (vector-ref M (- y2 1)) (- x2 1)))
+          (if (and (and (> (- y2 1) 0) (> (- x2 1) 0)) (or (zero? (list-ref (vector-ref M (- y2 1)) (- x2 1)))
                    (equal? (list-ref (vector-ref M (- y2 1)) (- x2 1)) (list-ref (vector-ref M y1) x1))))
+            1
+            2
+      )))
+    )
+)
+
+;-- check diagonal +x -y/-x +y
+(define (checkDiag2 M y1 y2 x1 x2 c)
+  (if (and (> y2 y1) (< x2 x1))
+    (if (and (< (+ y1 c) y2) (< (- x1 c) x2))
+      (if (not (zero? (list-ref (vector-ref M (+ y1 c)) (- x1 c))))
+        (checkDiag2 M y1 y2 x1 x2 (+ c 1))
+        0
+      )
+        (if (and (< (+ y2 1) 9) (> (- x2 1) 0) (equal? (list-ref (vector-ref M (+ y2 1)) (- x2 1)) (list-ref (vector-ref M y1) x1)))
+          1
+          (if (and (and (> (- y2 1) 0) (< (+ x2 1) 9)) (or (zero? (list-ref (vector-ref M (- y2 1)) (+ x2 1)))
+                   (equal? (list-ref (vector-ref M (- y2 1)) (+ x2 1)) (list-ref (vector-ref M y1) x1))))
+            1
+            2
+      )))
+    (if (and (> (- y1 c) y2) (< (+ x1 c) x2))
+      (if (not (zero? (list-ref (vector-ref M (- y1 c)) (+ x1 c))))
+        (checkDiag2 M y1 y2 x1 x2 (+ c 1))
+        0
+      )
+        (if (and (> (- y2 1) 0) (< (+ x2 1) 9) (equal? (list-ref (vector-ref M (- y2 1)) (+ x2 1)) (list-ref (vector-ref M y1) x1)))
+          1
+          (if (and (and (< (+ y2 1) 9) (> (- x2 1) 0)) (or (zero? (list-ref (vector-ref M (+ y2 1)) (- x2 1)))
+                   (equal? (list-ref (vector-ref M (+ y2 1)) (- x2 1)) (list-ref (vector-ref M y1) x1))))
             1
             2
       )))
@@ -123,6 +154,7 @@
       ((and (or (> difx 1) (< difx -1)) (zero? dify)) (begin (display (checkHor M x1 x2 y1 1)) (checkHor M x1 x2 y1 1)))
       ((and (or (> dify 1) (< dify -1)) (zero? difx)) (begin (display (checkVer M y1 y2 x1 1)) (checkVer M y1 y2 x1 1)))
       ((or (and (> dify 1) (> difx 1)) (and (< dify -1) (< difx -1))) (begin (display (checkDiag1 M y1 y2 x1 x2 1)) (checkDiag1 M y1 y2 x1 x2 1)))
+      ((or (and (> dify 1) (< difx -1)) (and (< dify -1) (> difx 1))) (begin (display (checkDiag2 M y1 y2 x1 x2 1)) (checkDiag2 M y1 y2 x1 x2 1)))
     (else 0))
   )
 )

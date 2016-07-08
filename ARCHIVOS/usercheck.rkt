@@ -1,10 +1,10 @@
 #lang racket
 
-(define file (open-input-file "./users.txt"))
+(provide checkuser)
 
 (define (writeuser user pass)
-  (define file (open-output-file "./users.txt" #:exists 'append))
-  (define file2 (open-output-file "./Puntajes.txt" #:exists 'append))
+  (define file (open-output-file "ARCHIVOS/users.txt" #:exists 'append))
+  (define file2 (open-output-file "ARCHIVOS/Puntajes.txt" #:exists 'append))
   (display user file)(display "," file)(display pass file)(newline file)
   (display user file2)(display "/" file2)(display 0 file2)(newline file2)
   (close-output-port file)
@@ -12,15 +12,24 @@
 )
 
 (define (checkuser user pass)
+  (define file (open-input-file "ARCHIVOS/users.txt"))
+  (checkuserAux user pass file)
+)
+
+(define (checkuserAux user pass file)
   (define cl (read-line file))
-  (display cl)
   (if (not (equal? cl eof))
-    (if (and (equal? user (car (string-split cl ","))) (equal? pass (cadr (string-split cl ","))))
-      (begin
-        (close-input-port file)
-        #t
-      )
-      (checkuser user pass)
+    (if (equal? user (car (string-split cl ",")))
+      (if (equal? pass (cadr (string-split cl ",")))
+        (begin
+          (close-input-port file)
+          #t
+        )
+        (begin
+          (close-input-port file)
+          #f
+        ))
+      (checkuserAux user pass file)
     );--ends true
     (begin
       (close-input-port file)
@@ -29,5 +38,3 @@
     )
   )
 )
-
-(checkuser "vasquezito" "123")
