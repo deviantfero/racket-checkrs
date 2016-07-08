@@ -2,6 +2,7 @@
 
 (require "./libs/io.rkt")
 (provide movechip)
+(provide move)
 
 (define (movechip M x1 y1 x2 y2)
   (define tmpv1 (list->vector (vector-ref M y1)))
@@ -21,17 +22,94 @@
   )
 )
 
+;-- checks for horizontal movement
+(define (checkHor M x1 x2 y cx)
+    (if (> x2 x1)
+      (if (< (+ x1 cx) x2) 
+        (if (not (zero? (list-ref (vector-ref M y) (+ x1 cx))))
+          (checkHor M x1 x2 y (+ cx 1))
+          0
+        )
+        (if (and (> (- x2 1) 0) (equal? (list-ref (vector-ref M y) (- x2 1)) (list-ref (vector-ref M y) x1 )))
+          1
+          (if (and (< (+ x2 1) 9) (or (zero? (list-ref (vector-ref M y) (+ x2 1)))
+                   (equal? (list-ref (vector-ref M y) (+ x2 1)) (list-ref (vector-ref M y) x1 ))))
+            1
+            2
+      )))
+      (if (> (- x1 cx) x2) 
+        (if (not (zero? (list-ref (vector-ref M y) (- x1 cx))))
+          (checkHor M x1 x2 y (+ cx 1))
+          0
+        )
+        (if (and (< (+ x2 1) 9) (equal? (list-ref (vector-ref M y) (+ x2 1)) (list-ref (vector-ref M y) x1 )))
+          1
+          (if (and (> (- x2 1) 0) (or (zero? (list-ref (vector-ref M y) (- x2 1)))
+                   (equal? (list-ref (vector-ref M y) (- x2 1)) (list-ref (vector-ref M y) x1 ))))
+            1
+            2
+     )))
+    )
+)
+
+;-- checks for vertical movement
+(define (checkVer M y1 y2 x cy)
+    (if (> y2 y1)
+      (if (< (+ y1 cy) y2) 
+        (if (not (zero? (list-ref (vector-ref M (+ y1 cy)) x)))
+          (checkVer M y1 y2 x (+ cy 1))
+          0
+        )
+        (if (and (> (- y2 1) 0) (equal? (list-ref (vector-ref M (- y2 1)) x) (list-ref (vector-ref M y1) x)))
+          1
+          (if (and (< (+ y2 1) 9) (or (zero? (list-ref (vector-ref M (+ y2 1)) x))
+                   (equal? (list-ref (vector-ref M (+ y2 1)) x) (list-ref (vector-ref M y1) x))))
+            1
+            2
+      )))
+      (if (> (- y1 cy) y2) 
+        (if (not (zero? (list-ref (vector-ref M (- y1 cy)) x)))
+          (checkVer M y1 y2 x (+ cy 1))
+          0
+        )
+        (if (and (< (+ y2 1) 9) (equal? (list-ref (vector-ref M (+ y2 1)) x) (list-ref (vector-ref M y1) x)))
+          1
+          (if (and (> (- y2 1) 0) (or (zero? (list-ref (vector-ref M (- y2 1)) x))
+                   (equal? (list-ref (vector-ref M (- y2 1)) x) (list-ref (vector-ref M y1) x ))))
+            1
+            2
+     )))
+    )
+)
+
+;-- checks if movement is valid
+(define (checkMovement M x1 y1 x2 y2)
+  (define difx (- x2 x1))
+  (define dify (- y2 y1))
+  (printf "~a:~a" difx dify)(newline)
+  (if (and (<= difx 1) (>= difx -1) (<= dify 1) (>= dify -1))
+    1
+    (cond
+      ((and (or (> difx 1) (< difx -1)) (zero? dify)) (begin (display (checkHor M x1 x2 y1 1)) (checkHor M x1 x2 y1 1)))
+      ((and (or (> dify 1) (< dify -1)) (zero? difx)) (begin (display (checkVer M y1 y2 x1 1)) (checkVer M y1 y2 x1 1)))
+    (else 0))
+  )
+)
+
 (define (move M x1 y1 x2 y2 p)
+  (define condition (checkMovement M x1 y1 x2 y2))
   (if (and 
       (equal? (list-ref (vector-ref M y1) x1) p)
       (zero? (list-ref (vector-ref M y2) x2)))
-    (movechip M x1 y1 x2 y2)
-    (begin
-      (display "movimiento invalido")
-      (move M (in "X1:") (in "Y1:") (in "X2:") (in "Y2:") p)
-    )
+    (case condition
+      ((0) #f)
+      ((1) (begin (movechip M x1 y1 x2 y2) #t))
+      ((2) (begin (movechip M x1 y1 x2 y2) #f))
+    );-- ends checkMovement if
+    #f
   )
 )
+
 
 ;-- checks Player2 wincondition
 (define (checkP2 M lim row)

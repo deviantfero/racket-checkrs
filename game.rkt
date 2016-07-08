@@ -7,9 +7,11 @@
 
 (define bg (make-object bitmap% "img/BOARD.jpg"))
 (define br (read-bitmap "img/bright_token.png"))
+(define timg (read-bitmap "img/turn.png"))
+(define turn 1)
 
 (struct gpt (x y))
-(struct gbutton (pt-1 pt-2 img img-pt))
+(struct gbutton (pt-1 pt-2 img img-pt) #:mutable)
 
 (define (createButtonR L x y cont difx dify)
   (if (< cont 9)
@@ -67,6 +69,7 @@
 (define gptmx (createGptM))
 (define buttons (createButtonM))
 (define mvmntlist '())
+(define titor (gbutton (gpt 0 0) (gpt 0 0) timg (gpt 71 393)))
 
 (define (find-xyAux M x y cx cy)
   (define btn (list-ref (list-ref M cy) cx))
@@ -138,12 +141,23 @@
         (find-xy (car L) (cadr L) 0 0)
         (find-xy (caddr L) (cadddr L) 0 0)))
       (display mo)
-      (if (checkList mo)
-        (movechip gm (caar mo) (cadar mo) (caadr mo) (cadadr mo))
-        (void)
+      (display turn)(newline)
+      (if (and (checkList mo) (<= turn 2) (move gm (caar mo) (cadar mo) (caadr mo) (cadadr mo) turn))
+        (if (equal? turn 2)
+          (begin
+            (set! turn 1)
+            (set-gbutton-img-pt! titor (gpt 71 393))
+            (refresh)
+          )
+          (begin
+            (set! turn (+ turn 1))
+            (set-gbutton-img-pt! titor (gpt 710 393))
+            (refresh)
+          )
+        )
+        (refresh)
       )
       (set! mvmntlist '())
-      (refresh)
       ;; display changes and display game matrix
       (newline)
       (map (lambda (x) (display x)(newline)) (vector->list gm))
@@ -198,6 +212,7 @@
                [img-y (gpt-y sel-button-pt)])
            (send dc draw-bitmap sel-button img-x img-y))])
          (draw-ch dc gm gptmx 0 0)
+         (send dc draw-bitmap timg (gpt-x (gbutton-img-pt titor)) (gpt-y (gbutton-img-pt titor)))
         )
 
     (super-new (paint-callback (lambda (c dc) (paint-game c dc))))))
