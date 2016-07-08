@@ -1,12 +1,12 @@
 #lang racket/gui
 
-(provide frame)
+(provide mainframe)
 
-;; Needed to define the frame in a different file
-;; As it is a frame which will be shared by all
+;; Needed to define the mainframe in a different file
+;; As it is a mainframe which will be shared by all
 ;; canvases
 
-(define frame
+(define mainframe
   (new frame%
        [label "Racket Checkers"]
        [width 922]

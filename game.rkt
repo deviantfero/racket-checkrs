@@ -220,8 +220,8 @@
 ;-- changes canvas according to button number
 (define (set-canvas opt)
   (case opt
-    ((1) (begin (new game-canvas% (parent frame))
-          (send frame delete-child (car (send frame get-children))) 
-          (send frame show #t)))
+    ((1) (begin (new game-canvas% (parent mainframe))
+          (send mainframe delete-child (car (send mainframe get-children))) 
+          (send mainframe show #t)))
   )
 )

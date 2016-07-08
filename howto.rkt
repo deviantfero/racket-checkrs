@@ -56,9 +56,9 @@
                             (< y (gpt-y (gbutton-pt-2 (second buttons)))))] (set-canvas 2))))
                 
     (define (set-canvas opt)
-      (define menu-canvas (new menu-canvas% (parent frame)))
+      (define menu-canvas (new menu-canvas% (parent mainframe)))
       (case opt
-        ((2) (begin (send frame delete-child howto-canvas) (send frame show #t)))
+        ((2) (begin (send mainframe delete-child howto-canvas) (send mainframe show #t)))
       )
     )
 

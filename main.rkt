@@ -227,24 +227,24 @@
 
     (super-new (paint-callback (lambda (c dc) (paint-game c dc))))))
 
-(define main-canvas (new menu-canvas% (parent frame)))
+(define main-canvas (new menu-canvas% (parent mainframe)))
 
 ;-- changes canvas according to button number
 (define (set-canvas opt)
   (case opt
-    ((1) (begin (new score-canvas% (parent frame))
-          (send frame delete-child (car (send frame get-children))) 
-          (send frame show #t)))
-    ((2) (begin (new game-canvas% (parent frame))
-          (send frame delete-child (car (send frame get-children))) 
-          (send frame show #t)))
-    ((3) (begin (new howto-canvas% (parent frame))
-          (send frame delete-child (car (send frame get-children))) 
-          (send frame show #t)))
-    ((4) (begin (new menu-canvas% (parent frame))
-          (send frame delete-child (car (send frame get-children))) 
-          (send frame show #t)))
+    ((1) (begin (new score-canvas% (parent mainframe))
+          (send mainframe delete-child (car (send mainframe get-children))) 
+          (send mainframe show #t)))
+    ((2) (begin (new loginf-canvas% (parent mainframe))
+          (send mainframe delete-child (car (send mainframe get-children))) 
+          (send mainframe show #t)))
+    ((3) (begin (new howto-canvas% (parent mainframe))
+          (send mainframe delete-child (car (send mainframe get-children))) 
+          (send mainframe show #t)))
+    ((4) (begin (new menu-canvas% (parent mainframe))
+          (send mainframe delete-child (car (send mainframe get-children))) 
+          (send mainframe show #t)))
   )
 )
 
-(send frame show #t)
+(send mainframe show #t)

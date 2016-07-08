@@ -1,10 +1,16 @@
 #lang racket/gui
 
 (provide loginf-canvas%)
+(require 2htdp/image)
 (require "./frame.rkt")
 
 (define bg-loginf (make-object bitmap% "img/BOARD_USER.jpg"))
 (define bg-logins (make-object bitmap% "img/BOARD_USER.jpg"))
+(define username '())
+(define password '())
+(define passwordshow '())
+(define active-field 0)
+
 (struct gpt (x y))
 (struct gbutton (pt-1 pt-2 img img-pt))
 
@@ -16,19 +22,13 @@
     (define sel-button 'none)
     (define sel-button-pt 'none)
 
-    (define container (new pane%
-      [parent frame] [spacing 40]
-      [border 50]))
-
-    (define username-text (new text-field% 
-      [label #f] [parent container]))
-
     (define back (make-object bitmap% "img/OK_HOVER.jpg"))
 
     (define buttons
       (list
        (gbutton (gpt 427 327) (gpt 524 383) back (gpt 416 317))
-       (gbutton (gpt 731 399) (gpt 822 471) back (gpt 713 380))))
+       (gbutton (gpt 508 205) (gpt 641 234) back (gpt 508 205))
+       (gbutton (gpt 508 261) (gpt 641 290) back (gpt 508 261))))
 
     (define (handle-mouse-motion x y)
       (let loop ([bl buttons])
@@ -56,7 +56,43 @@
         ([and (and (> x (gpt-x (gbutton-pt-1 (first buttons)))) 
                      (< x (gpt-x (gbutton-pt-2 (first buttons)))))
                       (and (> y (gpt-y (gbutton-pt-1 (first buttons))))
-                            (< y (gpt-y (gbutton-pt-2 (first buttons)))))] (set-canvas 1))))
+                            (< y (gpt-y (gbutton-pt-2 (first buttons)))))] 
+                   (begin (set-canvas 1)))
+        ([and (and (> x (gpt-x (gbutton-pt-1 (cadr buttons)))) 
+                     (< x (gpt-x (gbutton-pt-2 (cadr buttons)))))
+                      (and (> y (gpt-y (gbutton-pt-1 (cadr buttons))))
+                            (< y (gpt-y (gbutton-pt-2 (cadr buttons)))))] (set! active-field 1))
+        ([and (and (> x (gpt-x (gbutton-pt-1 (cadr buttons)))) 
+                     (< x (gpt-x (gbutton-pt-2 (caddr buttons)))))
+                      (and (> y (gpt-y (gbutton-pt-1 (caddr buttons))))
+                            (< y (gpt-y (gbutton-pt-2 (caddr buttons)))))] (set! active-field 2))
+        (else (set! active-field 0))))
+
+    (define (key-action key)
+      (printf "active-field: ~a " active-field)
+      (cond 
+        ((eq? active-field 1)  
+             (if (not (equal? key 'release)) 
+                (begin
+                  (case key
+                    ((#\backspace) (if (> (length username ) 0) (set! username (reverse (cdr (reverse username)))) (void)))
+                    ((#\return) (set! active-field 0))
+                    (else (if (and (char? key) (< (length username) 10)) (set! username (append username (list key))) (void)))
+                  )
+                  (refresh))
+                (void)))
+        ((eq? active-field 2) 
+             (if (not (equal? key 'release)) 
+                (begin
+                  (case key
+                    ((#\backspace) (if (> (length password ) 0) (begin (set! password (reverse (cdr (reverse password)))) (set! passwordshow (reverse (cdr (reverse passwordshow))))) (void)))
+                    ((#\return) (set! active-field 0))
+                    (else (if (and (char? key) (< (length password) 15)) (begin (set! passwordshow (append passwordshow (list #\*))) (set! password (append password (list key)))) (void)))
+                  )
+                  (refresh))
+                (void)))
+        (else (display "hahafag\n")))
+    )
                 
     (define/override (on-event evt)
       (let ([evt-type (send evt get-event-type)]
@@ -70,8 +106,15 @@
               (action evt-x evt-y)
               (printf "Click % (~a, ~a)~n" evt-x evt-y))])))
 
+    (define/override (on-char evt)
+      (let ([char (send evt get-key-code)])
+        (display "char: ")(display char)(newline)
+        (key-action char)))
+
     (define/private (paint-game self dc)
       (send dc draw-bitmap bg-loginf 0 0)
+      (send dc draw-text (list->string username) 508 205)
+      (send dc draw-text (list->string passwordshow) 508 261)
       (send dc set-pen "blue" 1 'solid) (send dc set-brush "white" 'transparent) (cond
         [(not (eq? sel-button 'none))
          (let ([img-x (gpt-x sel-button-pt)]
@@ -94,7 +137,8 @@
     (define buttons
       (list
        (gbutton (gpt 427 327) (gpt 524 383) back (gpt 416 317))
-       (gbutton (gpt 731 399) (gpt 822 471) back (gpt 713 380))))
+       (gbutton (gpt 508 205) (gpt 641 234) back (gpt 508 205))
+       (gbutton (gpt 508 261) (gpt 641 290) back (gpt 508 261))))
 
     (define (handle-mouse-motion x y)
       (let loop ([bl buttons])
@@ -122,7 +166,40 @@
         ([and (and (> x (gpt-x (gbutton-pt-1 (first buttons)))) 
                      (< x (gpt-x (gbutton-pt-2 (first buttons)))))
                       (and (> y (gpt-y (gbutton-pt-1 (first buttons))))
-                            (< y (gpt-y (gbutton-pt-2 (first buttons)))))] (set-canvas 2))))
+                            (< y (gpt-y (gbutton-pt-2 (first buttons)))))] (set-canvas 1))
+        ([and (and (> x (gpt-x (gbutton-pt-1 (cadr buttons)))) 
+                     (< x (gpt-x (gbutton-pt-2 (cadr buttons)))))
+                      (and (> y (gpt-y (gbutton-pt-1 (cadr buttons))))
+                            (< y (gpt-y (gbutton-pt-2 (cadr buttons)))))] (set! active-field 1))
+        (else (set! active-field 0))))
+
+    (define (key-action key)
+      (printf "active-field: ~a " active-field)
+      (cond 
+        ((eq? active-field 1)  
+             (if (not (equal? key 'release)) 
+                (begin
+                  (case key
+                    ((#\backspace) (if (> (length username ) 0) (set! username (reverse (cdr (reverse username)))) (void)))
+                    ((#\return) (set! active-field 0))
+                    (else (if (and (char? key) (< (length username) 10)) (set! username (append username (list key))) (void)))
+                  )
+                  (refresh))
+                (void)))
+        ((eq? active-field 2) 
+             (if (not (equal? key 'release)) 
+                (begin
+                  (case key
+                    ((#\backspace) (if (> (length password ) 0) (begin (set! password (reverse (cdr (reverse password)))) 
+                      (set! passwordshow (reverse (cdr (reverse passwordshow))))) (void)))
+                    ((#\return) (set! active-field 0))
+                    (else (if (and (char? key) (< (length password) 15)) (begin (set! passwordshow 
+                        (append passwordshow (list #\*))) (set! password (append password (list key)))) (void)))
+                  )
+                  (refresh))
+                (void)))
+        (else (display "hahafag\n")))
+    )
                 
     (define/override (on-event evt)
       (let ([evt-type (send evt get-event-type)]
@@ -136,8 +213,15 @@
               (action evt-x evt-y)
               (printf "Click % (~a, ~a)~n" evt-x evt-y))])))
 
+    (define/override (on-char evt)
+      (let ([char (send evt get-key-code)])
+        (display "char: ")(display char)(newline)
+        (key-action char)))
+
     (define/private (paint-game self dc)
-      (send dc draw-bitmap bg-logins 0 0)
+      (send dc draw-bitmap bg-loginf 0 0)
+      (send dc draw-text (list->string username) 508 205)
+      (send dc draw-text (list->string passwordshow) 508 261)
       (send dc set-pen "blue" 1 'solid) (send dc set-brush "white" 'transparent) (cond
         [(not (eq? sel-button 'none))
          (let ([img-x (gpt-x sel-button-pt)]
@@ -149,13 +233,13 @@
 ;-- changes canvas according to button number
 (define (set-canvas opt)
   (case opt
-    ((1) (begin (display "P1\n")(new logins-canvas% (parent frame))
-          (send frame delete-child (car (send frame get-children))) 
-          (send frame show #t)))
-    ((2) (begin (display "P2\n") (new loginf-canvas% (parent frame))
-          (send frame delete-child (car (send frame get-children))) 
-          (send frame show #t)))
+    ((1) (begin (display "P1\n")(new logins-canvas% (parent mainframe))
+          (send mainframe delete-child (car (send mainframe get-children))) 
+          (send mainframe show #t)))
+    ((2) (begin (display "P2\n") (new loginf-canvas% (parent mainframe))
+          (send mainframe delete-child (car (send mainframe get-children))) 
+          (send mainframe show #t)))
   )
 )
 
-;(define main-canvas (new menu-canvas% (parent frame)))
+;(define main-canvas (new menu-canvas% (parent mainframe)))
