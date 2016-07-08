@@ -197,7 +197,7 @@
 (define (checkP1 M lim row)
   (if (< row 4)
     (if (checkP1Aux M lim row)
-      (checkP1 M (- lim 1) (+ row 1))
+      (checkP1 M (+ lim 1) (+ row 1))
       #f
     )    
     #t
@@ -206,10 +206,7 @@
 
 (define (checkP1Aux M lim row)
   (define evalrow (vector-ref M row))
-  (if (andmap (lambda (n) (equal? n 1)) (list-tail evalrow lim))
-    #t
-    #f
-  )
+  (andmap (lambda (n) (equal? n 1)) (list-tail evalrow lim))
 )
 
 (define (wincondition M)

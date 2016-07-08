@@ -167,6 +167,7 @@
     )
 
     (define (action x y)
+      (display (wincondition gm))
       (if (< (length mvmntlist) 2)
         (set! mvmntlist (append mvmntlist (list x y)))
         (begin
