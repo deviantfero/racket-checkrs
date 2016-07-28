@@ -1,7 +1,7 @@
 #lang racket/gui
 
 (provide howto-canvas%)
-(require "main.rkt")
+(require "../main.rkt")
 
 (define bg-howto (make-object bitmap% "img/HOWTO.jpg"))
 (struct gpt (x y))

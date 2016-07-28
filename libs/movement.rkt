@@ -1,6 +1,6 @@
 #lang racket
 
-(require "./libs/io.rkt")
+(require "./io.rkt")
 (provide movechip)
 (provide move)
 (provide wincondition)

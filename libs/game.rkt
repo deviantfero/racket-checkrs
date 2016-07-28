@@ -1,10 +1,10 @@
 #lang racket/gui
 
-(require "./frame.rkt")
+(require "../frame.rkt")
 (require "./matriz.rkt")
 (require "./movement.rkt")
-(require "./libs/pdata.rkt")
-(require "./win.rkt")
+(require "./pdata.rkt")
+(require "../screens/win.rkt")
 (provide game-canvas%)
 
 (define bg (make-object bitmap% "img/BOARD.jpg"))

@@ -1,8 +1,8 @@
 #lang racket/gui
 
-(require "./login.rkt")
+(require "./screens/login.rkt")
 (require "./frame.rkt")
-(require "./game.rkt")
+(require "./libs/game.rkt")
 (require "./libs/pdata.rkt")
 
 (define bg (make-object bitmap% "img/bg.jpg"))

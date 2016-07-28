@@ -1,8 +1,8 @@
 #lang racket/gui
 
-(require "./libs/pdata.rkt")
-(require "./frame.rkt")
-(require "./ARCHIVOS/matriz.rkt")
+(require "../libs/pdata.rkt")
+(require "../frame.rkt")
+(require "../ARCHIVOS/matriz.rkt")
 
 (provide win-canvas%)
 

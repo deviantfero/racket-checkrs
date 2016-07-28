@@ -2,11 +2,11 @@
 
 (provide loginf-canvas%)
 (require 2htdp/image)
-(require "./frame.rkt")
-(require "./game.rkt")
+(require "../frame.rkt")
+(require "../libs/game.rkt")
 (require "./win.rkt")
-(require "./libs/pdata.rkt")
-(require "./ARCHIVOS/usercheck.rkt")
+(require "../libs/pdata.rkt")
+(require "../ARCHIVOS/usercheck.rkt")
 
 (define bg-loginf (make-object bitmap% "img/BOARD_USER1.jpg"))
 (define bg-logins (make-object bitmap% "img/BOARD_USER2.jpg"))

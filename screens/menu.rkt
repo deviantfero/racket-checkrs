@@ -1,7 +1,7 @@
 #lang racket/gui
 
 (provide menu-canvas%)
-(require "./main.rkt")
+(require "../main.rkt")
 
 (define bg (make-object bitmap% "img/bg.jpg"))
 
